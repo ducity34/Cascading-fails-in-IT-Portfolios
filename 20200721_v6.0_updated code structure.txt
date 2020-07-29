@@ -1,0 +1,670 @@
+### Import necessary packages
+import networkx as nx
+import matplotlib.pyplot as plt
+import random
+from random import choice
+import numpy as np
+import pandas as pd
+import warnings
+import matplotlib.cbook
+import xlsxwriter
+from openpyxl import Workbook
+
+warnings.filterwarnings("ignore", category=matplotlib.cbook.mplDeprecation) # ignore filter warnings
+
+### Final code model artefact
+## Network structure of Graph
+for i in range(1):
+    ## Determine, if user is risk-averse, -neutral or risky
+    risk_attitude = str(input("Please put in risk attitude of user (averse, neutral, risky): "))
+    # Define unchangeable network structure - Graph G - used as immutable graph structure to draw projects from
+    G = nx.DiGraph()
+    G.add_node('a', status=1, value=5, fail=0.05, spread=0.3)
+    G.add_node('b', status=1, value=10, fail=0.1, spread=0.3)
+    G.add_node('c', status=1, value=8, fail=0.2, spread=0.5)
+    G.add_node('d', status=1, value=7, fail=0.01, spread=0.7)
+    G.add_node('e', status=1, value=1, fail=0.02, spread=0.9)
+    G.add_node('f', status=1, value=6, fail=0.04, spread=0.1)
+    G.add_node('g', status=1, value=3, fail=0.05, spread=0.2)
+    G.add_node('h', status=1, value=10, fail=0.08, spread=0.4)
+    G.add_node('i', status=1, value=8, fail=0.09, spread=0.38)
+    G.add_node('j', status=1, value=7, fail=0.11, spread=0.36)
+    G.add_node('k', status=1, value=7, fail=0.01, spread=0.4)
+    G.add_node('l', status=1, value=10, fail=0.001, spread=0.394)
+    G.add_node('m', status=1, value=4, fail=0.02, spread=0.2)
+    G.add_node('n', status=1, value=8, fail=0.18, spread=0.3)
+    G.add_node('o', status=1, value=4, fail=0.04, spread=0.1)
+    G.add_node('p', status=1, value=9, fail=0.032, spread=0.7)
+    G.add_node('q', status=1, value=8, fail=0.053, spread=0.9)
+    G.add_node('r', status=1, value=3, fail=0.1, spread=0.4)
+    G.add_node('s', status=1, value=5, fail=0.04, spread=0.6)
+    G.add_node('t', status=1, value=7, fail=0.03, spread=0.9)
+    G.add_edge('a', 'b', dependency=0.4)
+    G.add_edge('a', 'c', dependency=0.6)
+    G.add_edge('b', 'd', dependency=0.9)
+    G.add_edge('b', 'i', dependency=0.5)
+    G.add_edge('c', 'a', dependency=0.2)
+    G.add_edge('c', 'd', dependency=0.3)
+    G.add_edge('c', 'e', dependency=0.7)
+    G.add_edge('d', 'g', dependency=0.4)
+    G.add_edge('d', 'j', dependency=0.2)
+    G.add_edge('d', 'b', dependency=0.9)
+    G.add_edge('e', 'c', dependency=0.4)
+    G.add_edge('e', 'f', dependency=0.8)
+    G.add_edge('f', 'g', dependency=0.2)
+    G.add_edge('g', 'l', dependency=0.7)
+    G.add_edge('g', 'h', dependency=0.5)
+    G.add_edge('h', 'k', dependency=0.1)
+    G.add_edge('h', 'm', dependency=0.4)
+    G.add_edge('i', 'd', dependency=0.3)
+    G.add_edge('i', 'l', dependency=0.2)
+    G.add_edge('j', 'o', dependency=0.1)
+    G.add_edge('k', 'n', dependency=0.8)
+    G.add_edge('k', 'r', dependency=0.2)
+    G.add_edge('l', 'q', dependency=0.3)
+    G.add_edge('m', 'h', dependency=0.9)
+    G.add_edge('m', 'n', dependency=0.6)
+    G.add_edge('m', 'p', dependency=0.3)
+    G.add_edge('m', 's', dependency=0.9)
+    G.add_edge('n', 'k', dependency=0.1)
+    G.add_edge('n', 'o', dependency=0.8)
+    G.add_edge('o', 't', dependency=0.9)
+    G.add_edge('p', 's', dependency=0.6)
+    G.add_edge('r', 's', dependency=0.7)
+    G.add_edge('r', 't', dependency=0.6)
+    G.add_edge('s', 'r', dependency=0.5)
+    G.add_edge('t', 'q', dependency=0.2)
+    G.add_edge('t', 'r', dependency=0.4)
+
+    # Define modifiable network structure - Graph G1 - used to update project values
+    G1 = nx.DiGraph()
+    G1.add_node('a', status=1, value=5, fail=0.05, spread=0.3)
+    G1.add_node('b', status=1, value=10, fail=0.1, spread=0.3)
+    G1.add_node('c', status=1, value=8, fail=0.2, spread=0.5)
+    G1.add_node('d', status=1, value=7, fail=0.01, spread=0.7)
+    G1.add_node('e', status=1, value=1, fail=0.02, spread=0.9)
+    G1.add_node('f', status=1, value=6, fail=0.04, spread=0.1)
+    G1.add_node('g', status=1, value=3, fail=0.05, spread=0.2)
+    G1.add_node('h', status=1, value=10, fail=0.08, spread=0.4)
+    G1.add_node('i', status=1, value=8, fail=0.09, spread=0.38)
+    G1.add_node('j', status=1, value=7, fail=0.11, spread=0.36)
+    G1.add_node('k', status=1, value=7, fail=0.01, spread=0.4)
+    G1.add_node('l', status=1, value=10, fail=0.001, spread=0.394)
+    G1.add_node('m', status=1, value=4, fail=0.02, spread=0.2)
+    G1.add_node('n', status=1, value=8, fail=0.18, spread=0.3)
+    G1.add_node('o', status=1, value=4, fail=0.04, spread=0.1)
+    G1.add_node('p', status=1, value=9, fail=0.032, spread=0.7)
+    G1.add_node('q', status=1, value=8, fail=0.053, spread=0.9)
+    G1.add_node('r', status=1, value=3, fail=0.1, spread=0.4)
+    G1.add_node('s', status=1, value=5, fail=0.04, spread=0.6)
+    G1.add_node('t', status=1, value=7, fail=0.03, spread=0.9)
+    G1.add_edge('a', 'b', dependency=0.4)
+    G1.add_edge('a', 'c', dependency=0.6)
+    G1.add_edge('b', 'd', dependency=0.9)
+    G1.add_edge('b', 'i', dependency=0.5)
+    G1.add_edge('c', 'a', dependency=0.2)
+    G1.add_edge('c', 'd', dependency=0.3)
+    G1.add_edge('c', 'e', dependency=0.7)
+    G1.add_edge('d', 'g', dependency=0.4)
+    G1.add_edge('d', 'j', dependency=0.2)
+    G1.add_edge('d', 'b', dependency=0.9)
+    G1.add_edge('e', 'c', dependency=0.4)
+    G1.add_edge('e', 'f', dependency=0.8)
+    G1.add_edge('f', 'g', dependency=0.2)
+    G1.add_edge('g', 'l', dependency=0.7)
+    G1.add_edge('g', 'h', dependency=0.5)
+    G1.add_edge('h', 'k', dependency=0.1)
+    G1.add_edge('h', 'm', dependency=0.4)
+    G1.add_edge('i', 'd', dependency=0.3)
+    G1.add_edge('i', 'l', dependency=0.2)
+    G1.add_edge('j', 'o', dependency=0.1)
+    G1.add_edge('k', 'n', dependency=0.8)
+    G1.add_edge('k', 'r', dependency=0.2)
+    G1.add_edge('l', 'q', dependency=0.3)
+    G1.add_edge('m', 'h', dependency=0.9)
+    G1.add_edge('m', 'n', dependency=0.6)
+    G1.add_edge('m', 'p', dependency=0.3)
+    G1.add_edge('m', 's', dependency=0.9)
+    G1.add_edge('n', 'k', dependency=0.1)
+    G1.add_edge('n', 'o', dependency=0.8)
+    G1.add_edge('o', 't', dependency=0.9)
+    G1.add_edge('p', 's', dependency=0.6)
+    G1.add_edge('r', 's', dependency=0.7)
+    G1.add_edge('r', 't', dependency=0.6)
+    G1.add_edge('s', 'r', dependency=0.5)
+    G1.add_edge('t', 'q', dependency=0.2)
+    G1.add_edge('t', 'r', dependency=0.4)
+
+    if risk_attitude == "averse": # determination of average fail limit according to risk averse user
+        for node in G.nodes:
+            nx.set_node_attributes(G, {(node[0]): {'fail': random.uniform(0, 0.05)}}) # averse risk selection
+            nx.set_node_attributes(G1, {(node[0]): {'fail': G.nodes[node[0]]['fail']}})
+    if risk_attitude == "neutral": # determination of average fail limit according to risk neutral user
+        for node in G.nodes:
+            nx.set_node_attributes(G, {(node[0]): {'fail': random.uniform(0.05, 0.1)}}) # neutral risk selection
+            nx.set_node_attributes(G1, {(node[0]): {'fail': G.nodes[node[0]]['fail']}})
+    if risk_attitude == "risky": # determination of average fail limit according to risky user
+        for node in G.nodes:
+            nx.set_node_attributes(G, {(node[0]): {'fail': random.uniform(0.1, 0.2)}}) # risky risk selection
+            nx.set_node_attributes(G1, {(node[0]): {'fail': G.nodes[node[0]]['fail']}})
+
+    if risk_attitude == "averse": # determination of spread limit according to risk averse user
+        for node in G1.nodes:
+            nx.set_node_attributes(G, {(node[0]): {'spread': random.uniform(0, 0.3)}}) # averse risk selection
+            nx.set_node_attributes(G1, {(node[0]): {'spread': G.nodes[node[0]]['spread']}})
+    if risk_attitude == "neutral": # determination of spread limit according to risk neutral user
+        for node in G1.nodes:
+            nx.set_node_attributes(G, {(node[0]): {'spread': random.uniform(0.3, 0.6)}}) # neutral risk selection
+            nx.set_node_attributes(G1, {(node[0]): {'spread': G.nodes[node[0]]['spread']}})
+    if risk_attitude == "risky": # determination of spread limit according to risky user
+        for node in G1.nodes:
+            nx.set_node_attributes(G, {(node[0]): {'spread': random.uniform(0.6, 1.0)}}) # risky risk selection
+            nx.set_node_attributes(G1, {(node[0]): {'spread': G.nodes[node[0]]['spread']}})
+
+    # Print starting graph
+    elarge = [(u, v) for (u, v, d) in G.edges(data=True) if d['dependency'] >= 0.6]
+    esmall = [(u, v) for (u, v, d) in G.edges(data=True) if d['dependency'] < 0.6]
+
+    # Positions of all nodes
+    pos = {'a': (1, 3),
+           'b': (2, 4),
+           'c': (2, 2),
+           'd': (3, 3),
+           'e': (3, 1),
+           'f': (4, 2),
+           'g': (5, 3),
+           'h': (5, 1),
+           'i': (3, 5),
+           'j': (5, 4),
+           'k': (6, 2),
+           'l': (6, 5),
+           'm': (7, 1),
+           'n': (7, 3),
+           'o': (8, 4),
+           'p': (8, 2),
+           'q': (8, 5),
+           'r': (9, 3),
+           's': (9, 1),
+           't': (10, 5)}
+
+    edge_labels = nx.get_edge_attributes(G, 'dependency')  # label edges with dependency between nodes
+    nx.draw(G, pos, cmap=plt.get_cmap('OrRd'), node_color='#D1CACA', with_labels=True, font_color='black')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels={('a', 'b'): G['a']['b']['dependency'],
+                                                      ('a', 'c'): G['a']['c']['dependency'],
+                                                      ('b', 'd'): G['b']['d']['dependency'],
+                                                      ('b', 'i'): G['b']['i']['dependency'],
+                                                      ('c', 'a'): G['c']['a']['dependency'],
+                                                      ('c', 'd'): G['c']['d']['dependency'],
+                                                      ('c', 'e'): G['c']['e']['dependency'],
+                                                      ('d', 'g'): G['d']['g']['dependency'],
+                                                      ('d', 'j'): G['d']['j']['dependency'],
+                                                      ('d', 'b'): G['d']['b']['dependency'],
+                                                      ('e', 'c'): G['e']['c']['dependency'],
+                                                      ('e', 'f'): G['e']['f']['dependency'],
+                                                      ('f', 'g'): G['f']['g']['dependency'],
+                                                      ('g', 'l'): G['g']['l']['dependency'],
+                                                      ('g', 'h'): G['g']['h']['dependency'],
+                                                      ('h', 'k'): G['h']['k']['dependency'],
+                                                      ('h', 'm'): G['h']['m']['dependency'],
+                                                      ('i', 'd'): G['i']['d']['dependency'],
+                                                      ('i', 'l'): G['i']['l']['dependency'],
+                                                      ('j', 'o'): G['j']['o']['dependency'],
+                                                      ('k', 'n'): G['k']['n']['dependency'],
+                                                      ('k', 'r'): G['k']['r']['dependency'],
+                                                      ('l', 'q'): G['l']['q']['dependency'],
+                                                      ('m', 'h'): G['m']['h']['dependency'],
+                                                      ('m', 'n'): G['m']['n']['dependency'],
+                                                      ('m', 'p'): G['m']['p']['dependency'],
+                                                      ('m', 's'): G['m']['s']['dependency'],
+                                                      ('n', 'k'): G['n']['k']['dependency'],
+                                                      ('n', 'o'): G['n']['o']['dependency'],
+                                                      ('o', 't'): G['o']['t']['dependency'],
+                                                      ('p', 's'): G['p']['s']['dependency'],
+                                                      ('r', 's'): G['r']['s']['dependency'],
+                                                      ('r', 't'): G['r']['t']['dependency'],
+                                                      ('s', 'r'): G['s']['r']['dependency'],
+                                                      ('t', 'q'): G['t']['q']['dependency'],
+                                                      ('t', 'r'): G['t']['r']['dependency'],
+                                                      })
+    nx.draw_networkx_edges(G, pos, edgelist=elarge,
+                           width=1.25, edge_color="#FF2D00")  # red if >= 0.6
+    nx.draw_networkx_edges(G, pos, edgelist=esmall,
+                           width=1.25, edge_color='#000000')  # black if < 0.6
+    plt.show()
+
+
+## Final code model artefact
+def final_code_model_artefact():
+    # Define needed lists
+    total_earned_value = []  # total average portfolio value divided by amount of iterations
+    total_termination_condition_values = []  # list of termination conditions, below which the project will be cancelled
+    spread_percentage_values = []  # list of spread percentages, below which the virus transfers to another project
+    heal_percentage_values = []  # list of heal percentages, below which the project will be healed again
+    tagged_nodes_list = []  # list of tagged nodes, which are immune to cancellation
+    cancel_nodes_list = []  # list of cancel nodes, which were cancelled due to value == 0 OR termination
+    restart_nodes_list = []
+    saved_images = []  # list of affected graphs for xlsx.
+    infec_A = []
+    infec_B = []
+    infec_C = []
+    infec_D = []
+    infec_E = []
+    infec_F = []
+    infec_G = []
+    infec_H = []
+    infec_I = []
+    infec_J = []
+    infec_K = []
+    infec_L = []
+    infec_M = []
+    infec_N = []
+    infec_O = []
+    infec_P = []
+    infec_Q = []
+    infec_R = []
+    infec_S = []
+    infec_T = []  # times affected
+    infec_A_valdev = []
+    infec_B_valdev = []
+    infec_C_valdev = []
+    infec_D_valdev = []
+    infec_E_valdev = []
+    infec_F_valdev = []
+    infec_G_valdev = []
+    infec_H_valdev = []
+    infec_I_valdev = []
+    infec_J_valdev = []
+    infec_K_valdev = []
+    infec_L_valdev = []
+    infec_M_valdev = []
+    infec_N_valdev = []
+    infec_O_valdev = []
+    infec_P_valdev = []
+    infec_Q_valdev = []
+    infec_R_valdev = []
+    infec_S_valdev = []
+    infec_T_valdev = []
+    iterations = input("How many iterations do you want to execute: ")
+    print(list(G.nodes.data()))  # show nodes including unit and value
+    amount_tagged_nodes = int(input("How many projects are immune to cancellation (reference: >70%)?: "))
+    for j in range(amount_tagged_nodes):
+        tagged_nodes_list.append(input("Please input the project which is not allowed "
+                                       "to be cancelled: "))
+    for k in range(3):
+        sum_partial_fail = 0
+        affected_nodes_list = []  # list of affected nodes by random sample
+        affected_node_valdev_list = []
+        immunity_list = []
+        termination_condition = float(input("Please input lower limit [termination_condition], "
+                                            "below which the project will be cancelled: "))
+        heal_percentage = float(input("Please input healing limit [heal_percentage], "
+                                      "below which the project can be healed again: "))
+        for l in range(int(iterations)):
+            for node in G1.nodes:
+                percentage_chance_of_failure = random.uniform(0, 1)  # random number will be drawn for every node
+                random_node = node
+                if percentage_chance_of_failure <= G1.nodes[random_node[0]]['fail']:  # infect project with fail
+                    if random_node[0] in immunity_list: #
+                        new_node_unit = G1.nodes[random_node[0]]['status']
+                        new_node_value = (new_node_unit) * (G1.nodes[random_node[0]]['value'])
+                    else:
+                        affected_nodes_list.append(random_node)
+                        new_node_unit = G1.nodes[random_node[0]]['status'] - 0.1 # decrease project status if infected
+                        new_node_value = (new_node_unit) * (G1.nodes[random_node[0]]['value']) # decrease project value
+                        old_node_value = G.nodes[random_node[0]]['value']
+                        if new_node_value < 0:  # value of node cannot turn into negative number
+                            nx.set_node_attributes(G1, {(random_node[0]): {'value': 0}})
+                        if new_node_unit < termination_condition:  # cancel project if below termination limit
+                            if random_node[0] in tagged_nodes_list:  # keep value if node immune to cancellation
+                                new_node_value = new_node_value
+                            else:
+                                nx.set_node_attributes(G1, {(random_node[0]): {'value': 0}})  # set node to 0
+                                cancel_nodes_list.append(random_node[0])  # append node to cancelled nodes list
+                        if new_node_unit <= G.nodes[random_node[0]]['value']:  # assign new node attribute to node
+                            nx.set_node_attributes(G1, {(random_node[0]): {'value': new_node_value}})
+                if G1.nodes[random_node[0]]['fail'] > percentage_chance_of_failure <= heal_percentage:  # heal node
+                    if G1.nodes[random_node[0]]['value'] == G.nodes[random_node[0]]['value']:  # max = orig. (value)
+                        nx.set_node_attributes(G1, {(random_node[0]): {'value': G.nodes[random_node[0]]['value']}})
+                    if G1.nodes[random_node[0]]['status'] == G.nodes[random_node[0]]['status']:  # max = orig. (status)
+                        nx.set_node_attributes(G1, {(random_node[0]): {'status': G.nodes[random_node[0]]['status']}})
+                    if G1.nodes[random_node[0]] in cancel_nodes_list:  # do not heal if project is cancelled 
+                        nx.set_node_attributes(G1, {(random_node[0]): {'value': 0}})
+                    if random_node[0] in immunity_list:
+                        nx.set_node_attributes(G1, {
+                            (random_node[0]): {'status': G1.nodes[random_node[0]]['status'] + 0.3}})  # heal status node
+                        new_node_value = (G1.nodes[random_node[0]]['status']) * (G.nodes[random_node[0]]['value'])
+                        nx.set_node_attributes(G1, {(random_node[0]): {'value': new_node_value}})
+                    else:
+                        nx.set_node_attributes(G1, {
+                            (random_node[0]): {'status': G1.nodes[random_node[0]]['status'] + 0.1}})
+                        new_node_value = (new_node_unit) * (G.nodes[random_node[0]]['value'])
+                        nx.set_node_attributes(G1, {(random_node[0]): {'value': new_node_value}})  # heal node
+                if G1.nodes[random_node[0]]['status'] > G.nodes[random_node[0]]['status']:  # max unit = orig. unit node
+                    nx.set_node_attributes(G1, {(random_node[0]): {'status': G.nodes[random_node[0]]['status']}})
+            for node in affected_nodes_list:
+                for m in G1.neighbors(node[0]):  # spread virus to neighbor projects
+                    percentage_chance_of_spread = random.uniform(0, 1)
+                    if percentage_chance_of_spread <= G1.nodes[node[0]]['spread']: 
+                        if m[0] in immunity_list: # no spread if neighbor project is immune against fails
+                            nx.set_node_attributes(G1, {(m): {'value': G1.nodes[m[0]]['value']}})
+                        else: # spread virus to neighbor project
+                            new_value = (1 - (G1[node[0]][m]['dependency'] * ((G1.nodes[node[0]]['value']) /
+                                                                              (G.nodes[node[0]]['value'])))) \
+                                        * G1.nodes[m]['value']
+                            nx.set_node_attributes(G1, {(m): {'value': new_value}})
+            if l == 200: # random nodes generate antibodies and are immune against virus, immutable status
+                for node in G1.nodes:
+                    percentage_chance_of_immunity = random.uniform(0, 1)  # random number will be drawn for every node
+                    immunity_node = node
+                    if percentage_chance_of_immunity <= 0.5:
+                        immunity_list.append(immunity_node[0])
+                print("Immune nodes 1.0: ", immunity_list)
+            if l == 500: # random nodes get full recovery and increase status & value
+                for n in range(5):
+                    restart_node = random.sample(G1.nodes, 1)
+                    restart_nodes_list.append(restart_node[0])
+                    nx.set_node_attributes(G1, {(restart_node[0]): {'status': G.nodes[restart_node[0]]['status']}})
+                    nx.set_node_attributes(G1, {(restart_node[0]): {'value': G.nodes[restart_node[0]]['value'] + 1}})
+            if l == 700: # random nodes suffer a recurrence and are vulnerable again
+                for n in range(2):
+                    recurrence_node = random.choice(immunity_list)
+                    immunity_list.remove(recurrence_node)
+                print("Immune nodes 2.0: ", immunity_list)
+            infec_A_valdev.append(G1.nodes['a']['value'])
+            infec_B_valdev.append(G1.nodes['b']['value'])
+            infec_C_valdev.append(G1.nodes['c']['value'])
+            infec_D_valdev.append(G1.nodes['d']['value'])
+            infec_E_valdev.append(G1.nodes['e']['value'])
+            infec_F_valdev.append(G1.nodes['f']['value'])
+            infec_G_valdev.append(G1.nodes['g']['value'])
+            infec_H_valdev.append(G1.nodes['h']['value'])
+            infec_I_valdev.append(G1.nodes['i']['value'])
+            infec_J_valdev.append(G1.nodes['j']['value'])
+            infec_K_valdev.append(G1.nodes['k']['value'])
+            infec_L_valdev.append(G1.nodes['l']['value'])
+            infec_M_valdev.append(G1.nodes['m']['value'])
+            infec_N_valdev.append(G1.nodes['n']['value'])
+            infec_O_valdev.append(G1.nodes['o']['value'])
+            infec_P_valdev.append(G1.nodes['p']['value'])
+            infec_Q_valdev.append(G1.nodes['q']['value'])
+            infec_R_valdev.append(G1.nodes['r']['value'])
+            infec_S_valdev.append(G1.nodes['s']['value'])
+            infec_T_valdev.append(G1.nodes['t']['value'])
+            node_attributes = nx.get_node_attributes(G1, 'value')
+            sum_partial_fail += sum(node_attributes.values()) / 20
+            affected_node_valdev_list.append(sum(node_attributes.values()) / 20)
+        val_map = {'a': affected_nodes_list.count('a'),
+                   'b': affected_nodes_list.count('b'),
+                   'c': affected_nodes_list.count('c'),
+                   'd': affected_nodes_list.count('d'),
+                   'e': affected_nodes_list.count('e'),
+                   'f': affected_nodes_list.count('f'),
+                   'g': affected_nodes_list.count('g'),
+                   'h': affected_nodes_list.count('h'),
+                   'i': affected_nodes_list.count('i'),
+                   'j': affected_nodes_list.count('j'),
+                   'k': affected_nodes_list.count('k'),
+                   'l': affected_nodes_list.count('l'),
+                   'm': affected_nodes_list.count('m'),
+                   'n': affected_nodes_list.count('n'),
+                   'o': affected_nodes_list.count('o'),
+                   'p': affected_nodes_list.count('p'),
+                   'q': affected_nodes_list.count('q'),
+                   'r': affected_nodes_list.count('r'),
+                   's': affected_nodes_list.count('s'),
+                   't': affected_nodes_list.count('t'),
+                   }
+        print("Amount of times node was affected: A=", affected_nodes_list.count('a'),
+              "B=", affected_nodes_list.count('b'),
+              "C=", affected_nodes_list.count('c'),
+              "D=", affected_nodes_list.count('d'),
+              "E=", affected_nodes_list.count('e'),
+              "F=", affected_nodes_list.count('f'),
+              "G=", affected_nodes_list.count('g'),
+              "H=", affected_nodes_list.count('h'),
+              "I=", affected_nodes_list.count('i'),
+              "J=", affected_nodes_list.count('j'),
+              "K=", affected_nodes_list.count('k'),
+              "L=", affected_nodes_list.count('l'),
+              "M=", affected_nodes_list.count('m'),
+              "N=", affected_nodes_list.count('n'),
+              "O=", affected_nodes_list.count('o'),
+              "P=", affected_nodes_list.count('p'),
+              "Q=", affected_nodes_list.count('q'),
+              "R=", affected_nodes_list.count('r'),
+              "S=", affected_nodes_list.count('s'),
+              "T=", affected_nodes_list.count('t'),
+              )
+        print("Net value with fail (Average of n = ", iterations, "): ", sum_partial_fail / int(iterations))
+        print("Maximum value: ", max(affected_node_valdev_list))
+        print("Minimum value: ", min(affected_node_valdev_list))
+        print("Affected node values: ", affected_node_valdev_list)
+        print("Immune nodes: ", immunity_list)
+        print("Fully recovered projects: ", restart_nodes_list)
+        total_termination_condition_values.append(termination_condition)
+        heal_percentage_values.append(heal_percentage)
+        average_fail = sum_partial_fail / int(iterations)
+        total_earned_value.append(sum_partial_fail / int(iterations))
+
+        # Append appearance of node to lists
+        infec_A.append(affected_nodes_list.count('a'))
+        infec_B.append(affected_nodes_list.count('b'))
+        infec_C.append(affected_nodes_list.count('c'))
+        infec_D.append(affected_nodes_list.count('d'))
+        infec_E.append(affected_nodes_list.count('e'))
+        infec_F.append(affected_nodes_list.count('f'))
+        infec_G.append(affected_nodes_list.count('g'))
+        infec_H.append(affected_nodes_list.count('h'))
+        infec_I.append(affected_nodes_list.count('i'))
+        infec_J.append(affected_nodes_list.count('j'))
+        infec_K.append(affected_nodes_list.count('k'))
+        infec_L.append(affected_nodes_list.count('l'))
+        infec_M.append(affected_nodes_list.count('m'))
+        infec_N.append(affected_nodes_list.count('n'))
+        infec_O.append(affected_nodes_list.count('o'))
+        infec_P.append(affected_nodes_list.count('p'))
+        infec_Q.append(affected_nodes_list.count('q'))
+        infec_R.append(affected_nodes_list.count('r'))
+        infec_S.append(affected_nodes_list.count('s'))
+        infec_T.append(affected_nodes_list.count('t'))
+
+        # Print graph with affected and sampled edges
+        elarge = [(u, v) for (u, v, d) in G.edges(data=True) if d['dependency'] >= 0.6]  # red
+        esmall = [(u, v) for (u, v, d) in G.edges(data=True) if d['dependency'] < 0.6]  # blue
+
+        # Positions for all nodes
+        pos = {'a': (1, 3),
+               'b': (2, 4),
+               'c': (2, 2),
+               'd': (3, 3),
+               'e': (3, 1),
+               'f': (4, 2),
+               'g': (5, 3),
+               'h': (5, 1),
+               'i': (3, 5),
+               'j': (5, 4),
+               'k': (6, 2),
+               'l': (6, 5),
+               'm': (7, 1),
+               'n': (7, 3),
+               'o': (8, 4),
+               'p': (8, 2),
+               'q': (8, 5),
+               'r': (9, 3),
+               's': (9, 1),
+               't': (10, 5)}
+
+        # Draw graph
+        values = [val_map.get(node, 5) for node in G.nodes()]
+        edge_labels = nx.get_edge_attributes(G, 'dependency')
+        nx.draw(G, pos, cmap=plt.get_cmap('OrRd'), node_color=values, with_labels=True, font_color='white')
+        nx.draw_networkx_edge_labels(G, pos, edge_labels={('a', 'b'): G['a']['b']['dependency'],
+                                                          ('a', 'c'): G['a']['c']['dependency'],
+                                                          ('b', 'd'): G['b']['d']['dependency'],
+                                                          ('b', 'i'): G['b']['i']['dependency'],
+                                                          ('c', 'a'): G['c']['a']['dependency'],
+                                                          ('c', 'd'): G['c']['d']['dependency'],
+                                                          ('c', 'e'): G['c']['e']['dependency'],
+                                                          ('d', 'g'): G['d']['g']['dependency'],
+                                                          ('d', 'j'): G['d']['j']['dependency'],
+                                                          ('d', 'b'): G['d']['b']['dependency'],
+                                                          ('e', 'c'): G['e']['c']['dependency'],
+                                                          ('e', 'f'): G['e']['f']['dependency'],
+                                                          ('f', 'g'): G['f']['g']['dependency'],
+                                                          ('g', 'l'): G['g']['l']['dependency'],
+                                                          ('g', 'h'): G['g']['h']['dependency'],
+                                                          ('h', 'k'): G['h']['k']['dependency'],
+                                                          ('h', 'm'): G['h']['m']['dependency'],
+                                                          ('i', 'd'): G['i']['d']['dependency'],
+                                                          ('i', 'l'): G['i']['l']['dependency'],
+                                                          ('j', 'o'): G['j']['o']['dependency'],
+                                                          ('k', 'n'): G['k']['n']['dependency'],
+                                                          ('k', 'r'): G['k']['r']['dependency'],
+                                                          ('l', 'q'): G['l']['q']['dependency'],
+                                                          ('m', 'h'): G['m']['h']['dependency'],
+                                                          ('m', 'n'): G['m']['n']['dependency'],
+                                                          ('m', 'p'): G['m']['p']['dependency'],
+                                                          ('m', 's'): G['m']['s']['dependency'],
+                                                          ('n', 'k'): G['n']['k']['dependency'],
+                                                          ('n', 'o'): G['n']['o']['dependency'],
+                                                          ('o', 't'): G['o']['t']['dependency'],
+                                                          ('p', 's'): G['p']['s']['dependency'],
+                                                          ('r', 's'): G['r']['s']['dependency'],
+                                                          ('r', 't'): G['r']['t']['dependency'],
+                                                          ('s', 'r'): G['s']['r']['dependency'],
+                                                          ('t', 'q'): G['t']['q']['dependency'],
+                                                          ('t', 'r'): G['t']['r']['dependency'],
+                                                          })
+        nx.draw_networkx_edges(G, pos, edgelist=elarge,
+                               width=1.25, edge_color="#FF2D00")
+        nx.draw_networkx_edges(G, pos, edgelist=esmall,
+                               width=1.25, edge_color='#000000')
+        # Plot graph
+        plt.axis('off')
+        plt.savefig('01_affected_graph' + str(k + 1) + '.png')
+        plt.show('01_affected_graph' + str(k + 1) + '.png')
+        saved_images.append('01_affected_graph' + str(k + 1) + '.png')
+        plt.plot(affected_node_valdev_list)
+        plt.axhline(average_fail, color='r', linestyle='--')
+        plt.savefig('02_Net portfolio value development_ ' + str(k + 1) + ' (red = average)')
+        plt.title('02_Net portfolio value development_ ' + str(k + 1) + ' (red = average)')
+        plt.show('02_Net portfolio value development_ ' + str(k + 1) + ' (red = average)')
+
+        # Add plotted graphs to excel file
+        workbook = xlsxwriter.Workbook('00_Display Affected Graphs.xlsx')
+        worksheet = workbook.add_worksheet('Graph Overview')
+        image_row = 0
+        image_col = 0
+        for image in saved_images:
+            worksheet.insert_image(image_row,
+                                   image_col,
+                                   image,
+                                   {'x_scale': 0.65, 'y_scale': 0.65})
+            image_row += 15
+        titles = ['Affected Graph_1', 'Affected Graph_2', 'Affected Graph_3', 'Affected Graph 4', 'Affected Graph_5']
+        title_row = 0
+        title_col = 7
+        for title in titles:
+            worksheet.write(title_row,
+                            title_col,
+                            title)
+            title_row += 15
+        workbook.close()
+        # Add values to excel and show how node values change over time
+        dg = pd.DataFrame.from_dict({'Node A': infec_A_valdev,
+                                     'Node B': infec_B_valdev,
+                                     'Node C': infec_C_valdev,
+                                     'Node D': infec_D_valdev,
+                                     'Node E': infec_E_valdev,
+                                     'Node F': infec_F_valdev,
+                                     'Node G': infec_G_valdev,
+                                     'Node H': infec_H_valdev,
+                                     'Node I': infec_I_valdev,
+                                     'Node J': infec_J_valdev,
+                                     'Node K': infec_K_valdev,
+                                     'Node L': infec_L_valdev,
+                                     'Node M': infec_M_valdev,
+                                     'Node N': infec_N_valdev,
+                                     'Node O': infec_O_valdev,
+                                     'Node P': infec_P_valdev,
+                                     'Node Q': infec_Q_valdev,
+                                     'Node R': infec_R_valdev,
+                                     'Node S': infec_S_valdev,
+                                     'Node T': infec_T_valdev,
+                                     'Portfolio Value': affected_node_valdev_list,
+                                     }, orient='index')
+        dg.transpose()
+        dg.to_excel('00_Node Value Changes.xlsx', sheet_name="Data Overview")
+        # Add values to excel and show inserted limits as well as how often nodes have been affected by fail
+        df = pd.DataFrame.from_dict({'Termination value': termination_condition,
+                                     'Node A Spread': G.nodes['a']['spread'],
+                                     'Node B Spread': G.nodes['b']['spread'],
+                                     'Node C Spread': G.nodes['c']['spread'],
+                                     'Node D Spread': G.nodes['d']['spread'],
+                                     'Node E Spread': G.nodes['e']['spread'],
+                                     'Node F Spread': G.nodes['f']['spread'],
+                                     'Node G Spread': G.nodes['g']['spread'],
+                                     'Node H Spread': G.nodes['h']['spread'],
+                                     'Node I Spread': G.nodes['i']['spread'],
+                                     'Node J Spread': G.nodes['j']['spread'],
+                                     'Node K Spread': G.nodes['k']['spread'],
+                                     'Node L Spread': G.nodes['l']['spread'],
+                                     'Node M Spread': G.nodes['m']['spread'],
+                                     'Node N Spread': G.nodes['n']['spread'],
+                                     'Node O Spread': G.nodes['o']['spread'],
+                                     'Node P Spread': G.nodes['p']['spread'],
+                                     'Node Q Spread': G.nodes['q']['spread'],
+                                     'Node R Spread': G.nodes['r']['spread'],
+                                     'Node S Spread': G.nodes['s']['spread'],
+                                     'Node T Spread': G.nodes['t']['spread'],
+                                     'Node A Fail': G.nodes['a']['fail'],
+                                     'Node B Fail': G.nodes['b']['fail'],
+                                     'Node C Fail': G.nodes['c']['fail'],
+                                     'Node D Fail': G.nodes['d']['fail'],
+                                     'Node E Fail': G.nodes['e']['fail'],
+                                     'Node F Fail': G.nodes['f']['fail'],
+                                     'Node G Fail': G.nodes['g']['fail'],
+                                     'Node H Fail': G.nodes['h']['fail'],
+                                     'Node I Fail': G.nodes['i']['fail'],
+                                     'Node J Fail': G.nodes['j']['fail'],
+                                     'Node K Fail': G.nodes['k']['fail'],
+                                     'Node L Fail': G.nodes['l']['fail'],
+                                     'Node M Fail': G.nodes['m']['fail'],
+                                     'Node N Fail': G.nodes['n']['fail'],
+                                     'Node O Fail': G.nodes['o']['fail'],
+                                     'Node P Fail': G.nodes['p']['fail'],
+                                     'Node Q Fail': G.nodes['q']['fail'],
+                                     'Node R Fail': G.nodes['r']['fail'],
+                                     'Node S Fail': G.nodes['s']['fail'],
+                                     'Node T Fail': G.nodes['t']['fail'],
+                                     'Heal percentage value': heal_percentage_values,
+                                     'Node A': infec_A,
+                                     'Node B': infec_B,
+                                     'Node C': infec_C,
+                                     'Node D': infec_D,
+                                     'Node E': infec_E,
+                                     'Node F': infec_F,
+                                     'Node G': infec_G,
+                                     'Node H': infec_H,
+                                     'Node I': infec_I,
+                                     'Node J': infec_J,
+                                     'Node K': infec_K,
+                                     'Node L': infec_L,
+                                     'Node M': infec_M,
+                                     'Node N': infec_N,
+                                     'Node O': infec_O,
+                                     'Node P': infec_P,
+                                     'Node Q': infec_Q,
+                                     'Node R': infec_R,
+                                     'Node S': infec_S,
+                                     'Node T': infec_T,
+                                     'Total earned PF value': total_earned_value,
+                                     }, orient='index'
+                                    )
+        df.to_excel('00_Algorithm Values.xlsx', sheet_name="Data Overview")
+
+        for node in G1.nodes:  # restore values for new iteration
+            nx.set_node_attributes(G1, {(node[0]): {'value': G.nodes[node[0]]['value']}})
+            nx.set_node_attributes(G1, {(node[0]): {'status': G.nodes[node[0]]['status']}})
+
+final_code_model_artefact()
