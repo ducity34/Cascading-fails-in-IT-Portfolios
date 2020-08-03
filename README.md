@@ -12,4 +12,4 @@ It is my first GitHub repository and will be updated with all content over the p
 
 - the inital code [final_code_model_artefact](https://github.com/ducity34/IT-Project-fail-spread/blob/master/20200721_v6.0_updated%20code%20structure.txt) is the final code model algorithm I developed throughout the process of my master thesis.
 
-- the IT portfolio contains 20 projects and 38 dependencies connecting these projects. An [exemplary IT portfolio](CODE) I used in the algorithm looks like this.
+- the IT portfolio contains 20 projects and 38 dependencies connecting these projects. An [exemplary IT portfolio](https://github.com/ducity34/IT-Project-fail-spread/blob/master/03_Graph%20Example_Section%204.2.png) I used in the algorithm looks like this.
