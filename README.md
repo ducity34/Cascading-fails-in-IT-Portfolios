@@ -7,3 +7,7 @@ This python code tries to run a cascading fail spread in IT projects within a br
 The initial simulation builds on the basic SI cascade model and was further developed within the scope of my master thesis. The cascading model therefore further developed from SI -> SIR -> SIRS cascade model, following Kermack and McKendrick (1927) as well as Hethcote (1976).
 
 It is my first GitHub repository and will be updated with all content over the past few weeks to open up the opportunity to further develop my work and to drive future research regarding this topic!
+
+## Content
+
+- the inital code [final_code_model_artefact](CODE) is the final code model algorithm I developed throughout the process of my master thesis.
