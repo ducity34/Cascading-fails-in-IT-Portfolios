@@ -10,4 +10,4 @@ It is my first GitHub repository and will be updated with all content over the p
 
 ## Content
 
-- the inital code [final_code_model_artefact](CODE) is the final code model algorithm I developed throughout the process of my master thesis.
+- the inital code [final_code_model_artefact](https://github.com/ducity34/IT-Project-fail-spread/blob/master/20200721_v6.0_updated%20code%20structure.txt) is the final code model algorithm I developed throughout the process of my master thesis.
