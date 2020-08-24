@@ -1,4 +1,4 @@
-# IT-Project-fail-spread
+# Cascading fails in IT Portfolios
 
 This python code tries to run a cascading fail spread in IT projects within a broad IT portfolio (ITP). Similar to a virus spread, where individuals in society get infected with a virus and spread it through aquaintances, this IT virus spreads via dependencies. Such a systemic risks are already received great attention in the reseach fields of epidemiology, finance theory, and energy grids. Nevertheless, research about systemic risks in IS research is scarce. Due to increasing amount of IT projects in companies and existing dependencies between these projects, malfunctions (e.g. delays) in specific projects can trigger a domino effect eventually effecting the whole ITP. This code tries to simulate such a fail spread, based on several assumptions and potential cases (e.g. immunity of projects) which can occur throughout the simulation. 
 
